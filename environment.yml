@@ -1,0 +1,12 @@
+name: personal-optimization-hub
+channels:
+- conda-forge
+- defaults
+dependencies:
+- pandas=0.19.2=np111py34_1
+- seaborn=0.7.1=py34_0
+- pywin32=220=py34_2
+- numpy=1.11.3=py34_0
+- pip:
+  - pyhook==1.5.1
+
