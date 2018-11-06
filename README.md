@@ -1,6 +1,28 @@
 # Personal Optimization Hub
 A central repository for scripts, utils, tools and resources related to personal optimization
 
+## Setup
+Run
+
+     python setup.py install
+
+You will then be able to call directly the following utils.
+
+## [Spaced Repetition](https://www.gwern.net/Spaced-repetition)
+Set of utilities to generate and manage spaced repetition content.
+
+For example generation of ANKI decks from csv/xlsx files. Files need at least *text* and *note* columns, or *question* and *answer* ones.
+
+To generate an ANKI deck simply run
+
+    anki-gen -i <input_csv_path> -o <output_dir> -n <deck_name>
+
+Or if you are processing an .xlsx file (decks names will be derived from sheets names):
+
+    anki-gen -i <input_xlsx_path> -o <output_dir> --process-excel
+
+See `anki-gen -h` for a complete usage description
+
 ## Keylogger
 Utility to log and analyze keyboard and mouse events. 
 
@@ -24,6 +46,6 @@ Manually start and stop logger routine. Proceed to notebook for analysis.
 * analysis in the future might be automatized and manage deletion of logs file.
 
 
-## License
+# License
 
 Released under version 2.0 of the [Apache License](http://www.apache.org/licenses/LICENSE-2.0)
