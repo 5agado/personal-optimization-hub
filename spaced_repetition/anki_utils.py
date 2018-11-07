@@ -3,6 +3,7 @@ import numpy as np
 import genanki
 import argparse
 import os
+import sys
 from random import shuffle
 
 ############################
@@ -36,7 +37,7 @@ base_model = genanki.Model(
 ############################
 
 def gen_question_answer(entry: dict):
-    return genanki.Note(model=base_model, fields=[entry['question'], entry['answer']])
+    return genanki.Note(model=base_model, fields=[entry['question'], str(entry['answer'])])
 
 
 def gen_by_author(entry: dict):
@@ -95,21 +96,26 @@ def generate_deck(data: pd.DataFrame, deck_name: str, out_dir: str):
     genanki.Package(my_deck).write_to_file(deck_path)
 
 
-def generate_decks_from_excel(xlsx_path: str, output_dir: str):
+def generate_decks_from_excel(xlsx_path: str, output_dir: str, generate_all=False):
     data = pd.read_excel(xlsx_path, sheet_name=None)
     for sheet_name, df in data.items():
         df.fillna("", inplace=True)
         df['tags'] = df['tags'].apply(lambda x: x.strip().split())
+        # Filter entries already exported
+        if not generate_all:
+            df = df[~df['exported']]
         generate_deck(df, deck_name=sheet_name, out_dir=output_dir)
 
 
-def load_data(filepath: str) -> pd.DataFrame:
+def load_data(filepath: str, generate_all=False) -> pd.DataFrame:
     data = pd.read_csv(filepath, converters={"tags": lambda x: x.strip().split()})
     data.fillna("", inplace=True)
+    if not generate_all:
+        data = data[~data['exported']]
     return data
 
 
-if __name__ == "__main__":
+def main(_=None):
     parser = argparse.ArgumentParser(description='ANKI Deck Generation')
     parser.add_argument('-i', '--input-path', type=str, help='Path to the input CSV file containing the data'
                                                              'or Excel one if --process-excel is provided',
@@ -118,12 +124,17 @@ if __name__ == "__main__":
                         default='./')
     parser.add_argument('-n', '--deck-name', type=str, default='anki_deck')
     parser.add_argument('--process-excel', action='store_true', default=False)
+    parser.add_argument('--generate-all', action='store_true', default=False,
+                        help='Force generation of all entries, ignoring the `exported` value')
 
     args = parser.parse_args()
 
     if args.process_excel:
-        generate_decks_from_excel(args.input_path, args.output_dir)
+        generate_decks_from_excel(args.input_path, args.output_dir, args.generate_all)
     else:
-        data_df = load_data(args.input_path)
+        data_df = load_data(args.input_path, args.generate_all)
 
         generate_deck(data_df, deck_name=args.deck_name, out_dir=args.output_dir)
+
+if __name__ == "__main__":
+    main(sys.argv[1:])

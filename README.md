@@ -11,7 +11,7 @@ You will then be able to call directly the following utils.
 ## [Spaced Repetition](https://www.gwern.net/Spaced-repetition)
 Set of utilities to generate and manage spaced repetition content.
 
-For example generation of ANKI decks from csv/xlsx files. Files need at least *text* and *note* columns, or *question* and *answer* ones.
+For example generation of ANKI decks from csv/xlsx files. Files need at least *text* and *note* columns, or *question* and *answer* ones. There should always be a *tags* column.
 
 To generate an ANKI deck simply run
 
@@ -22,6 +22,13 @@ Or if you are processing an .xlsx file (decks names will be derived from sheets 
     anki-gen -i <input_xlsx_path> -o <output_dir> --process-excel
 
 See `anki-gen -h` for a complete usage description
+
+### Latex in ANKI
+Need some setup in order to view Latex in Anki on MacOS. Overall is about installing Latex and dvipng. See also [here](https://apple.stackexchange.com/questions/224784/issues-with-anki-and-basictex).
+
+To define Latex content in a card just wrap it in the following way:
+
+    [latex]\begin{displaymath}your_content\end{displaymath}[/latex]
 
 ## Keylogger
 Utility to log and analyze keyboard and mouse events. 
