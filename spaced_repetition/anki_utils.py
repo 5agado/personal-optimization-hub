@@ -50,6 +50,12 @@ def gen_by_note(entry: dict):
         return genanki.Note(model=base_model, fields=[entry['notes'], entry['text']])
 
 
+def gen_by_context(entry: dict):
+    if entry['context']:
+        return genanki.Note(model=base_model, fields=["When context is: " + entry['context'] + " /n Say?",
+                                                      entry['text']])
+
+
 def gen_text_incomplete(entry: dict, nb_remove=NB_WORDS_REMOVED):
     full_text = entry['text']
     text_parts = full_text.split()
@@ -70,10 +76,16 @@ def generate_deck(data: pd.DataFrame, deck_name: str, out_dir: str):
     # Remember-text style sheet
     elif 'text' in data:
         for _, entry in data.iterrows():
+            # by author
             note = gen_by_author(entry)
             if note:
                 my_deck.add_note(note)
+            # by notes
             note = gen_by_note(entry)
+            if note:
+                my_deck.add_note(note)
+            # by context
+            note = gen_by_context(entry)
             if note:
                 my_deck.add_note(note)
             for _ in range(NB_INCOMPLETE_EXAMPLES):
@@ -135,6 +147,7 @@ def main(_=None):
         data_df = load_data(args.input_path, args.generate_all)
 
         generate_deck(data_df, deck_name=args.deck_name, out_dir=args.output_dir)
+
 
 if __name__ == "__main__":
     main(sys.argv[1:])
