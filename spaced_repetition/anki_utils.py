@@ -46,13 +46,13 @@ def gen_by_author(entry: dict):
 
 
 def gen_by_note(entry: dict):
-    if entry['notes']:
+    if 'notes' in entry and entry['notes']:
         return genanki.Note(model=base_model, fields=[entry['notes'], entry['text']])
 
 
 def gen_by_context(entry: dict):
-    if entry['context']:
-        return genanki.Note(model=base_model, fields=["When context is: " + entry['context'] + " /n Say?",
+    if 'context' in entry and entry['context']:
+        return genanki.Note(model=base_model, fields=["When context is: " + entry['context'] + " \n Say?",
                                                       entry['text']])
 
 
@@ -70,6 +70,12 @@ def generate_deck(data: pd.DataFrame, deck_name: str, out_dir: str):
     # Q/A style sheet
     if 'question' in data:
         for _, entry in data.iterrows():
+            # TODO generalize (for w/e column) and export type
+            # latex syntax wrapping
+            if 'latex' in entry['tags']:
+                entry['answer'] = entry['answer'].replace("<$$>", "[latex]\\begin{displaymath}")
+                entry['answer'] = entry['answer'].replace("</$$>", "\\end{displaymath}[/latex]")
+
             note = gen_question_answer(entry)
             my_deck.add_note(note)
 
@@ -115,7 +121,7 @@ def generate_decks_from_excel(xlsx_path: str, output_dir: str, generate_all=Fals
         df['tags'] = df['tags'].apply(lambda x: x.strip().split())
         # Filter entries already exported
         if not generate_all:
-            df = df[~df['exported']]
+            df = df[~df['exported'].astype(bool)]
         generate_deck(df, deck_name=sheet_name, out_dir=output_dir)
 
 
@@ -123,7 +129,7 @@ def load_data(filepath: str, generate_all=False) -> pd.DataFrame:
     data = pd.read_csv(filepath, converters={"tags": lambda x: x.strip().split()})
     data.fillna("", inplace=True)
     if not generate_all:
-        data = data[~data['exported']]
+        data = data[~data['exported'].astype(bool)]
     return data
 
 
