@@ -59,9 +59,11 @@ def gen_by_context(entry: dict):
 def gen_text_incomplete(entry: dict, nb_remove=NB_WORDS_REMOVED):
     full_text = entry['text']
     text_parts = full_text.split()
-    remove_idxs = np.random.choice(np.arange(len(text_parts)), min(len(text_parts)-2, nb_remove), replace=False)
-    partial_text = " ".join(['<...>' if idx in remove_idxs else part for idx, part in enumerate(text_parts)])
-    return genanki.Note(model=base_model, fields=[partial_text, full_text])
+    # generate only if text has enough words
+    if len(text_parts) > (NB_WORDS_REMOVED + 4):
+        remove_idxs = np.random.choice(np.arange(len(text_parts)), nb_remove, replace=False)
+        partial_text = " ".join(['<...>' if idx in remove_idxs else part for idx, part in enumerate(text_parts)])
+        return genanki.Note(model=base_model, fields=[partial_text, full_text])
 
 
 def generate_deck(data: pd.DataFrame, deck_name: str, out_dir: str):
@@ -96,7 +98,8 @@ def generate_deck(data: pd.DataFrame, deck_name: str, out_dir: str):
                 my_deck.add_note(note)
             for _ in range(NB_INCOMPLETE_EXAMPLES):
                 note = gen_text_incomplete(entry)
-                my_deck.add_note(note)
+                if note:
+                    my_deck.add_note(note)
     else:
         print("No known sheet style identified")
         return

@@ -7,6 +7,7 @@ REQUIREMENTS = [
     'seaborn',
     # spaced_repetition specific
     'genanki',
+    'xlrd',
 ]
 
 setup(
