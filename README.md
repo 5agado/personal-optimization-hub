@@ -67,7 +67,7 @@ Alternatively the code will currently do this for you if you specify the *latex*
 
 Some setup is needed in order to view Latex in Anki on MacOS. Overall is about installing Latex and dvipng. See also [here](https://apple.stackexchange.com/questions/224784/issues-with-anki-and-basictex).
 
-Also in order to view Latex on AnkiDroid see [here](https://apps.ankiweb.net/docs/manual.html#latex-on-web/mobile).
+Also in order to view Latex on AnkiDroid see [here](https://docs.ankiweb.net/#/math?id=latex). Remember to run **Tools->Check Media** before syncing, such that images will be displayed on AnkiDroid.
 
 ## Keylogger
 Utility to log and analyze keyboard and mouse events. 
